@@ -29,7 +29,7 @@ def test_tcp(typ, addr, port, user=None, pwd=None):
         # Can be treated identical to a regular socket object
         # Raw HTTP request
         host = "www.baidu.com"
-        req = b"GET / HTTP/1.0\r\nHost: %s\r\n\r\n" % host
+        req = b"GET / HTTP/1.1\r\nHost: %s\r\n\r\n" % host
         s.connect((host, 80))
         s.send(req)
         rsp = s.recv(4096)
