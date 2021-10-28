@@ -33,6 +33,7 @@ def test_tcp(typ, addr, port, user=None, pwd=None):
         s.connect((host, 80))
         s.send(req)
         rsp = s.recv(4096)
+        print(rsp)
         if rsp.startswith("HTTP/1.1 200 OK"):
             print("TCP check passed")
         else:
