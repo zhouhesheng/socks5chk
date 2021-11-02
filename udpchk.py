@@ -45,6 +45,13 @@ def test_udp(typ, addr, port, user=None, pwd=None):
             print("UDP check passed")
         else:
             print("Invalid response")
+            
+        req = b"\xe3\x00\x03\xfa\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe2\xc8\x2e\xf3\x83\xd9\x44\xaa"
+        s.sendto(req, ("pool.ntp.org", 123))
+        (rsp, address)= s.recvfrom(4096)
+        print(rsp.encode('hex'))
+
+        
     except socket.error as e:
         print(repr(e))
     except socks.ProxyError as e:
