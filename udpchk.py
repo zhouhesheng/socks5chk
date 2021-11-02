@@ -36,6 +36,15 @@ def test_udp(typ, addr, port, user=None, pwd=None):
             print("UDP check passed")
         else:
             print("Invalid response")
+            
+        req = b"\x91\x8b\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x07\x65\x78\x61\x6d\x70\x6c\x65\x03\x63\x6f\x6d\x00\x00\x01\x00\x01"
+        s.sendto(req, ("8.8.8.8", 53))
+        (rsp, address)= s.recvfrom(4096)
+        print(rsp.encode('hex'))
+        if rsp[0] == req[0] and rsp[1] == req[1]:
+            print("UDP check passed")
+        else:
+            print("Invalid response")
     except socket.error as e:
         print(repr(e))
     except socks.ProxyError as e:
