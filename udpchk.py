@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # udpchk.py - simple tool to test UDP support of SOCKS5 proxy.
 # Copyright (C) 2016-2017 Zhuofei Wang <semigodking@gmail.com>
 # 
@@ -13,8 +15,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+
 from __future__ import print_function
 import sys
+
 if sys.platform == 'win32' and (sys.version_info.major < 3
                                 or (sys.version_info.major == 3 and sys.version_info.minor < 4)):
     # inet_pton is only supported on Windows since Python 3.4
@@ -33,23 +37,34 @@ def test_udp(typ, addr, port, user=None, pwd=None):
         (rsp, address)= s.recvfrom(4096)
         print(rsp.encode('hex'))
         if rsp[0] == req[0] and rsp[1] == req[1]:
-            print("UDP check passed")
+            print(u'UDP check passed （谷歌DNS）')
         else:
-            print("Invalid response")
+            print(u'Invalid response（谷歌DNS）')
             
         req = b"\x91\x8b\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x07\x65\x78\x61\x6d\x70\x6c\x65\x03\x63\x6f\x6d\x00\x00\x01\x00\x01"
         s.sendto(req, ("8.8.8.8", 53))
         (rsp, address)= s.recvfrom(4096)
         print(rsp.encode('hex'))
         if rsp[0] == req[0] and rsp[1] == req[1]:
-            print("UDP check passed")
+            print(u'UDP check passed（谷歌DNS）')
         else:
-            print("Invalid response")
+            print(u'Invalid response（谷歌DNS）')
             
         req = b"\xe3\x00\x03\xfa\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe2\xc8\x2e\xf3\x83\xd9\x44\xaa"
         s.sendto(req, ("pool.ntp.org", 123))
         (rsp, address)= s.recvfrom(4096)
         print(rsp.encode('hex'))
+        print(u'NTP完成')
+        
+        req = b"\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x05\x62\x61\x69\x64\x75\x03\x63\x6f\x6d\x00\x00\x01\x00\x01"
+        s.sendto(req, ("202.96.199.133", 53))
+        (rsp, address)= s.recvfrom(4096)
+        print(rsp.encode('hex'))
+        if rsp[0] == req[0] and rsp[1] == req[1]:
+            print(u'UDP check passed（上海电信DNS）')
+        else:
+            print(u'Invalid response（上海电信DNS）')
+
 
         
     except socket.error as e:
