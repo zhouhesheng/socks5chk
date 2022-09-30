@@ -18,6 +18,7 @@
 
 from __future__ import print_function
 import sys
+import time
 
 if sys.platform == 'win32' and (sys.version_info.major < 3
                                 or (sys.version_info.major == 3 and sys.version_info.minor < 4)):
@@ -46,6 +47,7 @@ def test_udp(addr, port, user=None, pwd=None):
         else:
             print(u'Invalid response（谷歌DNS）')
 
+        time.sleep(1)
         req = b"\x91\x8b\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x07\x65\x78\x61\x6d\x70\x6c\x65\x03\x63\x6f\x6d\x00\x00\x01\x00\x01"
         s.sendto(req, ("1.1.1.1", 53))
         (rsp, address) = s.recvfrom(4096)
@@ -59,6 +61,7 @@ def test_udp(addr, port, user=None, pwd=None):
         else:
             print(u'Invalid response（谷歌DNS）')
 
+        time.sleep(1)
         req = b"\xe3\x00\x03\xfa\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe2\xc8\x2e\xf3\x83\xd9\x44\xaa"
         s.sendto(req, ("pool.ntp.org", 123))
         (rsp, address) = s.recvfrom(4096)
@@ -68,6 +71,7 @@ def test_udp(addr, port, user=None, pwd=None):
             print(rsp.hex())
         print(u'NTP完成')
 
+        time.sleep(1)
         req = b"\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x05\x62\x61\x69\x64\x75\x03\x63\x6f\x6d\x00\x00\x01\x00\x01"
         s.sendto(req, ("202.96.199.133", 53))
         (rsp, address) = s.recvfrom(4096)
