@@ -81,16 +81,16 @@ def test_udp(addr, port, user=None, pwd=None):
         else:
             print(u'Invalid response（上海电信DNS）')
 
-
-    except socket.error as e:
-        print(repr(e))
     except socks.ProxyError as e:
         print(e.msg)
+    except socket.error as e:
+        print(repr(e))
 
 
 def main():
     import os
     import argparse
+
     def ip_port(string):
         value = int(string)
         if value <= 0 or value > 65535:

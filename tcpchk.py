@@ -55,6 +55,7 @@ def test_tcp(addr, port, user=None, pwd=None):
 def main():
     import os
     import argparse
+
     def ip_port(string):
         value = int(string)
         if value <= 0 or value > 65535:
