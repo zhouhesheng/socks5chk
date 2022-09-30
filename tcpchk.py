@@ -31,20 +31,25 @@ def test_tcp(addr, port, user=None, pwd=None):
         # Can be treated identical to a regular socket object
         # Raw HTTP request
         host = "www.baidu.com"
-        req = b"GET / HTTP/1.1\r\nHost: %s\r\n\r\n" % host
+        req = "GET / HTTP/1.1\r\nHost: %s\r\n\r\n" % host
         s.connect((host, 80))
-        s.send(req)
+        s.send(str.encode(req))
         rsp = s.recv(4096)
+
+        if not isinstance(rsp, str):
+            rsp = str(rsp, 'utf-8')
+
         print(rsp)
+
         if rsp.startswith("HTTP/1.1 200 OK"):
             print("TCP check passed")
         else:
             print("Invalid response")
         s.close()
-    except socket.error as e:
-        print(repr(e))
     except socks.ProxyError as e:
         print(e.msg)
+    except socket.error as e:
+        print(repr(e))
 
 
 def main():
