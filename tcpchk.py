@@ -15,6 +15,7 @@
 
 from __future__ import print_function
 import sys
+
 if sys.platform == 'win32' and (sys.version_info.major < 3
                                 or (sys.version_info.major == 3 and sys.version_info.minor < 4)):
     # inet_pton is only supported on Windows since Python 3.4
@@ -22,10 +23,11 @@ if sys.platform == 'win32' and (sys.version_info.major < 3
 import socket
 import socks
 
-def test_tcp(typ, addr, port, user=None, pwd=None):
-    s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM) # Same API as socket.socket in the standard lib
+
+def test_tcp(addr, port, user=None, pwd=None):
+    s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)  # Same API as socket.socket in the standard lib
     try:
-        s.set_proxy(socks.SOCKS5, addr, port, False, user, pwd) # SOCKS4 and SOCKS5 use port 1080 by default
+        s.set_proxy(socks.SOCKS5, addr, port, False, user, pwd)  # SOCKS4 and SOCKS5 use port 1080 by default
         # Can be treated identical to a regular socket object
         # Raw HTTP request
         host = "www.baidu.com"
@@ -55,18 +57,18 @@ def main():
             raise argparse.ArgumentTypeError(msg)
         return value
 
-    parser = argparse.ArgumentParser(prog=os.path.basename(__file__), 
-        description='Test SOCKS5 TCP support by sending HTTP request to www.baidu.com and receive response.')
-    parser.add_argument('--proxy', "-p",  metavar="PROXY", dest='proxy', required=True,
-                       help='IP or domain name of proxy to be tested.')
-    parser.add_argument('--port', "-P",  metavar="PORT", dest='port', type=ip_port, default=1080,
-                       help='Port of proxy to be tested.')
+    parser = argparse.ArgumentParser(prog=os.path.basename(__file__),
+                                     description='Test SOCKS5 TCP support by sending HTTP request to www.baidu.com and receive response.')
+    parser.add_argument('--proxy', "-p", metavar="PROXY", dest='proxy', required=True,
+                        help='IP or domain name of proxy to be tested.')
+    parser.add_argument('--port', "-P", metavar="PORT", dest='port', type=ip_port, default=1080,
+                        help='Port of proxy to be tested.')
     parser.add_argument('--user', "-u", metavar="username", dest="user", default=None,
-                       help='Specify username to be used for proxy authentication.')
+                        help='Specify username to be used for proxy authentication.')
     parser.add_argument('--pwd', "-k", metavar="password", dest="pwd", default=None,
-                       help='Specify password to be used for proxy authentication.')
+                        help='Specify password to be used for proxy authentication.')
     args = parser.parse_args()
-    test_tcp(None, args.proxy, args.port, args.user, args.pwd)
+    test_tcp(args.proxy, args.port, args.user, args.pwd)
 
 
 if __name__ == "__main__":

@@ -13,8 +13,10 @@ Usage
 -----
 Run command like this and check output.
 ```shell
-python tcpchk.py -p 192.168.1.1 -P 1080
-python tcpchk.py -p 192.168.1.1 -P 1080 -u user1 -k password1
-python udpchk.py -p 192.168.1.1 -P 1080
-python udpchk.py -p 192.168.1.1 -P 1080 -u user1 -k password1
+python2 udpchk.py -p 127.0.0.1 -P 12348 
+
+python2 tcpchk.py -p 192.168.1.1 -P 1080
+python2 tcpchk.py -p 192.168.1.1 -P 1080 -u user1 -k password1
+python2 udpchk.py -p 192.168.1.1 -P 1080
+python2 udpchk.py -p 192.168.1.1 -P 1080 -u user1 -k password1
 ```
