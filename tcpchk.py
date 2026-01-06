@@ -34,6 +34,7 @@ def verify_by_http(s):
     s.send(req.encode("utf-8"))
     rsp = s.recv(4096)
     decoded = rsp.decode("utf-8", errors="ignore")
+    print(decoded)
     return decoded.startswith("HTTP/1.0 200 OK") or decoded.startswith(
         "HTTP/1.1 200 OK"
     )
@@ -44,6 +45,7 @@ def verify_by_dns(s):
     s.connect(("8.8.8.8", 53))
     s.send(req)
     rsp = s.recv(4096)
+    print(rsp)
     return rsp[2] == req[2] and rsp[3] == req[3]
 
 

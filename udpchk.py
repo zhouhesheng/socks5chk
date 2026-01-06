@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # udpchk.py - simple tool to test UDP support of SOCKS5 proxy.
 # Copyright (C) 2016-2017 Zhuofei Wang <semigodking@gmail.com>
 #
@@ -13,13 +15,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+
 from __future__ import print_function
 import sys
 
-if sys.platform == 'win32' and (
-    sys.version_info.major < 3
-    or (sys.version_info.major == 3 and sys.version_info.minor < 4)
-):
+if sys.platform == 'win32' and (sys.version_info.major < 3
+                                or (sys.version_info.major == 3 and sys.version_info.minor < 4)):
     # inet_pton is only supported on Windows since Python 3.4
     import win_inet_pton
 import socket
@@ -27,32 +28,55 @@ import socks
 
 
 def test_udp(typ, addr, port, user=None, pwd=None):
-    s = socks.socksocket(
-        socket.AF_INET, socket.SOCK_DGRAM
-    )  # Same API as socket.socket in the standard lib
+    s = socks.socksocket(socket.AF_INET, socket.SOCK_DGRAM)  # Same API as socket.socket in the standard lib
     try:
-        s.set_proxy(
-            socks.SOCKS5, addr, port, False, user, pwd
-        )  # SOCKS4 and SOCKS5 use port 1080 by default
+        s.set_proxy(socks.SOCKS5, addr, port, False, user, pwd)  # SOCKS4 and SOCKS5 use port 1080 by default
         # Can be treated identical to a regular socket object
         # Raw DNS request
         req = b"\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x05\x62\x61\x69\x64\x75\x03\x63\x6f\x6d\x00\x00\x01\x00\x01"
         s.sendto(req, ("8.8.8.8", 53))
         (rsp, address) = s.recvfrom(4096)
+        print(rsp.hex())
         if rsp[0] == req[0] and rsp[1] == req[1]:
-            print("UDP check passed")
+            print(u'UDP check passed （谷歌DNS）')
         else:
-            print("Invalid response")
-    except socks.ProxyError as e:
-        print(e.msg)
+            print(u'Invalid response（谷歌DNS）')
+
+        req = b"\x91\x8b\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x07\x65\x78\x61\x6d\x70\x6c\x65\x03\x63\x6f\x6d\x00\x00\x01\x00\x01"
+        s.sendto(req, ("8.8.8.8", 53))
+        (rsp, address) = s.recvfrom(4096)
+        print(rsp.hex())
+        if rsp[0] == req[0] and rsp[1] == req[1]:
+            print(u'UDP check passed（谷歌DNS）')
+        else:
+            print(u'Invalid response（谷歌DNS）')
+
+        req = b"\xe3\x00\x03\xfa\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe2\xc8\x2e\xf3\x83\xd9\x44\xaa"
+        s.sendto(req, ("pool.ntp.org", 123))
+        (rsp, address) = s.recvfrom(4096)
+        print(rsp.hex())
+        print(u'NTP完成')
+
+        req = b"\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x05\x62\x61\x69\x64\x75\x03\x63\x6f\x6d\x00\x00\x01\x00\x01"
+        s.sendto(req, ("202.96.199.133", 53))
+        (rsp, address) = s.recvfrom(4096)
+        print(rsp.hex())
+        if rsp[0] == req[0] and rsp[1] == req[1]:
+            print(u'UDP check passed（上海电信DNS）')
+        else:
+            print(u'Invalid response（上海电信DNS）')
+
+
+
     except socket.error as e:
         print(repr(e))
+    except socks.ProxyError as e:
+        print(e.msg)
 
 
 def main():
     import os
     import argparse
-
     def ip_port(string):
         value = int(string)
         if value <= 0 or value > 65535:
@@ -60,43 +84,16 @@ def main():
             raise argparse.ArgumentTypeError(msg)
         return value
 
-    parser = argparse.ArgumentParser(
-        prog=os.path.basename(__file__),
-        description='Test SOCKS5 UDP support by sending DNS request to 8.8.8.8:53 and receive response.',
-    )
-    parser.add_argument(
-        '--proxy',
-        "-p",
-        metavar="PROXY",
-        dest='proxy',
-        required=True,
-        help='IP or domain name of proxy to be tested against UDP support.',
-    )
-    parser.add_argument(
-        '--port',
-        "-P",
-        metavar="PORT",
-        dest='port',
-        type=ip_port,
-        default=1080,
-        help='Port of proxy to be tested against UDP support.',
-    )
-    parser.add_argument(
-        '--user',
-        "-u",
-        metavar="username",
-        dest="user",
-        default=None,
-        help='Specify username to be used for proxy authentication.',
-    )
-    parser.add_argument(
-        '--pwd',
-        "-k",
-        metavar="password",
-        dest="pwd",
-        default=None,
-        help='Specify password to be used for proxy authentication.',
-    )
+    parser = argparse.ArgumentParser(prog=os.path.basename(__file__),
+                                     description='Test SOCKS5 UDP support by sending DNS request to 8.8.8.8:53 and receive response.')
+    parser.add_argument('--proxy', "-p", metavar="PROXY", dest='proxy', required=True,
+                        help='IP or domain name of proxy to be tested against UDP support.')
+    parser.add_argument('--port', "-P", metavar="PORT", dest='port', type=ip_port, default=1080,
+                        help='Port of proxy to be tested against UDP support.')
+    parser.add_argument('--user', "-u", metavar="username", dest="user", default=None,
+                        help='Specify username to be used for proxy authentication.')
+    parser.add_argument('--pwd', "-k", metavar="password", dest="pwd", default=None,
+                        help='Specify password to be used for proxy authentication.')
     args = parser.parse_args()
     test_udp(None, args.proxy, args.port, args.user, args.pwd)
 
